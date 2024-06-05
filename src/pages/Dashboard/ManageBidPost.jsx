@@ -49,7 +49,6 @@ const ManageBidPost = () => {
 
     return (
         <div>
-            <h2>Manage your all Bid Post</h2>
             <div className="container p-2 mx-auto sm:p-4">
                 <Helmet>
                     <title>

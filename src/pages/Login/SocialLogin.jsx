@@ -14,13 +14,13 @@ const SocialLogin = () => {
 
     const handleSocialLogin = socialProvider => {
         socialProvider()
-        .then(result =>{
-            console.log(result)
-            if(result?.user?.email){
+        .then(data =>{
+            console.log(data)
+            if(data?.user?.email){
                 const userInfo = {
-                    email: result?.user?.email,
-                    fullName: result?.user?.displayName,
-                    imageUrl: result?.user?.photoURL
+                    email: data?.user?.email,
+                    fullName: data?.user?.displayName,
+                    imageUrl: data?.user?.photoURL
                 }
                 fetch(`${import.meta.env.VITE_API_URL}/user`, {
                     method: "POST",
@@ -29,11 +29,12 @@ const SocialLogin = () => {
                     },
                     body : JSON.stringify(userInfo)
                 })
-                console.log(userInfo)
-                // .then((res) => res.json())
-                // .then((data) => console.log(data));
+                    .then((res) => res.json())
+                    .then((data) => {
+                    localStorage.setItem('token', data?.token)
+                });
             }
-            if (result.user){
+            if (data.user){
                 toast.success('Sign in successfully!') 
                 navigate(from, {replace: true});                
             }
@@ -49,8 +50,8 @@ const SocialLogin = () => {
             <div className='divider'>Continue with</div>
             <div className='flex gap-2 justify-center items-center mb-4'>
                 <button onClick={() =>handleSocialLogin(googleLogin)} className='btn btn-outline'>Google</button>
-                <button onClick={() =>handleSocialLogin(twitterLogin)} className='btn btn-outline'>Twitter</button>
-                <button onClick={() =>handleSocialLogin(githubLogin)} className='btn btn-outline'>Github</button>
+                {/* <button onClick={() =>handleSocialLogin(twitterLogin)} className='btn btn-outline'>Twitter</button>
+                <button onClick={() =>handleSocialLogin(githubLogin)} className='btn btn-outline'>Github</button> */}
             </div>
         </>
     );

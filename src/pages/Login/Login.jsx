@@ -77,8 +77,8 @@ const Login = () => {
             <div className="hero-content flex-col lg:flex-row-reverse gap-2 lg:gap-8">
                 <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100 text-center ">
                     <h2 className="text-5xl mb-6">Log In</h2>
-                    <h1 className="text-3xl lg:text-7xl">Soul Share</h1>
-                    <p>Volunteerism that Touches the Soul</p>
+                    <h1 className="text-xl md:text-5xl text-white font-bold"><span className="text-orange-600">Bid</span><span className="text-purple-600">Day</span></h1>
+                    <p className="text-orange-600">Where deals are await!</p>
                 </div>
                 <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
                     <form onSubmit={handleSubmit(onSubmit)} className="card-body">

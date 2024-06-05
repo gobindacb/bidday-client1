@@ -18,6 +18,7 @@ const UpdateBidPost = () => {
 
     // update or edit a post
     const handleUpdateSubmit = async e => {
+        const token = localStorage.getItem('token')
         e.preventDefault()
         const form = e.target
         const image = form.image.value
@@ -60,7 +61,13 @@ const UpdateBidPost = () => {
         }
         if (confirmation.isConfirmed) {
             try {
-                const { data } = await axios.put(`${import.meta.env.VITE_API_URL}/bidPost/${bidPost._id}`, postData)
+                const { data } = await axios.put(`${import.meta.env.VITE_API_URL}/bidPost/${bidPost._id}`, postData,
+                    {
+                        headers: {
+                            authorization: `Bearer ${token}`
+                        }
+                    }
+                );
                 console.log(data)
                 toast.success('Update & save the post successfully')
                 navigate('/dashboard/manage-bidPost')

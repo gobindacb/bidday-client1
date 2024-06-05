@@ -4,6 +4,7 @@ import CategoryTab from "../components/CategoryTab";
 import Review from "../components/Review";
 import Feature from "../components/Feature";
 import ExitingOffers from "../components/ExitingOffers";
+import Stats from "../components/Stats";
 
 
 const Home = () => {
@@ -15,6 +16,7 @@ const Home = () => {
             <ExitingOffers posts={posts}/>
             <Feature/>
             <Review/>
+            <Stats/>
         </div>
     );
 };

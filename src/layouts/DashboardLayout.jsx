@@ -64,6 +64,10 @@ const DashboardLayout = () => {
                             Logout
                         </button>
                     </div>
+                    <div className="flex flex-col justify-center items-center">
+                        <h1 className="text-xl md:text-5xl text-white font-bold"><span className="text-orange-600">Bid</span><span className="text-purple-600">Day</span></h1>
+                        <p className="text-orange-600">Where deals are await!</p>
+                    </div>
                 </ul>
             </div>
         </div>
