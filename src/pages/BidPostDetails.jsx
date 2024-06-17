@@ -1,9 +1,80 @@
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import UseAuth from "../hooks/UseAuth";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
+import BidRequestPost from "../components/Modals/BidRequestPost";
 
 
 const BidPostDetails = () => {
     const bidPost = useLoaderData();
-    const { image, title, product_name, category, location, condition, purchase_date, selling_reason, description, seller, price } = bidPost
+    const { _id, image, title, product_name, category, location, condition, purchase_date, selling_reason, description, seller, price } = bidPost
+    const navigate = useNavigate()
+    const { user } = UseAuth();
+
+    // State to control the visibility of the modal
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Function to open the modal
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    // Function to close the modal
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+    // post comments
+    const handleBidPostComment = async e => {
+        e.preventDefault()
+        const form = e.target
+        const comment = form.comment.value
+
+        const commentData = {
+            comment,
+            bidPostId: _id,
+            bidPostTitle: title,
+            createdAt: new Date(),
+            commentator: {
+                name: user?.displayName,
+                email: user?.email,
+                photo: user?.photoURL
+            }
+        }
+        try {
+            const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/comment`, commentData,
+
+            )
+            console.log(data)
+            toast.success('Congrats! comment post successfully.')
+            form.reset();
+            // navigate('/')
+        } catch (err) {
+            toast.error(err)
+            console.log(err)
+        }
+    }
+
+    // load comment by bidPostId
+    const [comments, setComments] = useState([]);
+
+    useEffect(() => {
+        async function fetchComments() {
+            try {
+                const response = await fetch(`http://localhost:5000/comment/${_id}`);
+                const data = await response.json();
+                setComments(data);
+            } catch (error) {
+                console.error('Error fetching comments:', error);
+            }  
+            
+        }
+        setComments('');
+        fetchComments();
+    }, []);
+
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-12">
             <div className="grid col-span-3 mt-4">
@@ -55,8 +126,10 @@ const BidPostDetails = () => {
                             </button>
                         </div>
                         <div>
-                            <button className="btn bg-purple-600 text-orange-600 text-xl font-bold">Start Bid</button>
+                            <button onClick={openModal} className="btn bg-purple-600 text-orange-600 text-xl font-bold">Start Bid</button>
                         </div>
+                        {/* Render the modal if isModalOpen is true */}
+                        {isModalOpen && <BidRequestPost data={bidPost} onClose={closeModal} />}
                         <div className="flex space-x-2 text-sm dark:text-gray-600">
                             <button type="button" className="flex items-center p-1 space-x-1.5">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" aria-label="Number of comments" className="w-4 h-4 fill-current dark:text-violet-600">
@@ -80,12 +153,15 @@ const BidPostDetails = () => {
                 <div className="flex flex-col items-center mt-3">
                     <h2 className="text-center text-xl font-semibold">Comments for this post</h2>
                     <div>
-                        <form>
+                        <form onSubmit={handleBidPostComment}>
                             <label className="form-control w-full max-w-xs">
                                 <div className="label">
                                     <span className="label-text">What is your comment?</span>
                                 </div>
-                                <input type="text" placeholder="Type here" className="input input-bordered w-full max-w-xs" />
+                                <input
+                                    type="text"
+                                    name="comment"
+                                    placeholder="Type here" className="input input-bordered w-full max-w-xs" />
                                 <div className="label">
                                     <div className="label">
                                         <input className="btn btn-sm rounded-xl w-full" type="submit" value="Comment" />
@@ -93,8 +169,24 @@ const BidPostDetails = () => {
                                 </div>
                             </label>
                         </form>
-                        <div>
-                            <p className="text-sm">No comment yet</p>
+                        <div className="p-4">
+                            {comments.length > 0 ? (
+                                <ul>
+                                    {comments.map(comment => (
+                                        <li key={comment._id}>
+                                            <div className="flex gap-1 mb-2">
+                                                <div><img className="h-8 w-8 rounded-full" src={comment.commentator.photo} alt="who comment?" /></div>
+                                                <div>
+                                                    <p className="text-xs mb-0">{comment.commentator.name}</p>
+                                                    <p className="pl-2">{comment.comment}</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="text-sm">No comment yet</p>
+                            )}
                         </div>
                     </div>
                 </div>

@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 
 
 const ManageBidPost = () => {
-
+    const token = localStorage.getItem("token");
     const { user } = UseAuth()
     const [bidPosts, setBidPosts] = useState([])
 
@@ -22,30 +22,61 @@ const ManageBidPost = () => {
         setBidPosts(data)
     }
 
-    // delete recipe post
     const handleDelete = async (id) => {
         const confirmation = await swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        });
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                });
+            
 
-        if (confirmation.isConfirmed) {
-            try {
-                const { data } = await axios.delete(`${import.meta.env.VITE_API_URL}/bidPost/${id}`);
-                console.log(data);
-                toast.success('Delete successfully');
-                getData();
-            } catch (err) {
-                console.log(err);
-                toast.error(err.message);
-            }
+                if (confirmation.isConfirmed) {
+        await fetch(`${import.meta.env.VITE_API_URL}/bidPost/${id}`, {
+          method: "DELETE",
+          headers: {
+            "Content-type": "application/json",
+            authorization: `Bearer ${token}`,
+          },
+        })
+          .then((res) => res.json())
+          .then(() => {
+            toast.success("Product Deleted");
+            getData();
+          });
         }
-    };
+      };
+
+    // // delete recipe post
+    // const handleDelete = async (id) => {
+    //     const confirmation = await swal.fire({
+    //         title: 'Are you sure?',
+    //         text: "You won't be able to revert this!",
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Yes, delete it!'
+    //     });
+
+    //     if (confirmation.isConfirmed) {
+    //         try {
+    //             const { data } = await axios.delete(`${import.meta.env.VITE_API_URL}/bidPost/${id}`
+                    
+    //             );
+                
+    //             console.log(data);
+    //             toast.success('Delete successfully');
+    //             getData();
+    //         } catch (err) {
+    //             console.log(err);
+    //             toast.error(err.message);
+    //         }
+    //     }
+    // };
 
     return (
         <div>

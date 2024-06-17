@@ -31,7 +31,7 @@ const DashboardLayout = () => {
                             <div>
                                 <h2 className="text-lg font-semibold">{user?.displayName}</h2>
                                 <span className="flex items-center space-x-1">
-                                    <a rel="noopener noreferrer" href="#" className="text-xs hover:underline dark:text-gray-600">View profile</a>
+                                    <Link to='/dashboard/profile' className="text-xs hover:underline text-gray-600">View profile</Link>
                                 </span>
                             </div>
                         </div>
@@ -47,10 +47,13 @@ const DashboardLayout = () => {
                             <Link to='/dashboard/profile'>My Profile</Link>
                         </li>
                         <li>
+                            <Link to='/dashboard/add-bidPost'>Add Bid Post</Link>
+                        </li>
+                        <li>
                             <Link to='/dashboard/manage-bidPost'>Manage Bid Post</Link>
                         </li>
                         <li>
-                            <Link to='/dashboard/add-bidPost'>Add Bid Post</Link>
+                            <Link to='/dashboard/manage-bidRequest'>Bid Request</Link>
                         </li>
                         <li>
                             <Link to='/write-blog'>Write a blog</Link>

@@ -20,7 +20,7 @@ const SocialLogin = () => {
                 const userInfo = {
                     email: data?.user?.email,
                     fullName: data?.user?.displayName,
-                    imageUrl: data?.user?.photoURL
+                    photoURL: data?.user?.photoURL
                 }
                 fetch(`${import.meta.env.VITE_API_URL}/user`, {
                     method: "POST",
@@ -31,6 +31,7 @@ const SocialLogin = () => {
                 })
                     .then((res) => res.json())
                     .then((data) => {
+                        console.log('data', data);
                     localStorage.setItem('token', data?.token)
                 });
             }

@@ -15,9 +15,9 @@ const UpdateBidPost = () => {
     const { user } = UseAuth()
     const navigate = useNavigate();
     const [startDate, setStartDate] = useState(new Date());
+   
 
-    // update or edit a post
-    const handleUpdateSubmit = async e => {
+    const handleUpdateSubmit = async (e) => {
         const token = localStorage.getItem('token')
         e.preventDefault()
         const form = e.target
@@ -31,15 +31,7 @@ const UpdateBidPost = () => {
         const reason = form.reason.value
         const purchase_date = startDate
         const description = form.description.value
-        const confirmation = await swal.fire({
-            title: 'Are you sure to edit?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, update it!'
-        });
+        
 
         const postData = {
             image,
@@ -59,25 +51,108 @@ const UpdateBidPost = () => {
                 photo: user?.photoURL,
             },
         }
-        if (confirmation.isConfirmed) {
-            try {
-                const { data } = await axios.put(`${import.meta.env.VITE_API_URL}/bidPost/${bidPost._id}`, postData,
-                    {
-                        headers: {
-                            authorization: `Bearer ${token}`
-                        }
-                    }
-                );
-                console.log(data)
-                toast.success('Update & save the post successfully')
-                navigate('/dashboard/manage-bidPost')
-            } catch (err) {
-                console.log(err)
-                toast.error(err.message)
+        await fetch(
+            `${import.meta.env.VITE_API_URL}/bidPost/${bidPost._id}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-type": "application/json",
+                authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(postData),
             }
-        }
-
+          )
+            .then((res) => res.json())
+            .then(() => toast.success("Product updated "));
+            navigate('/dashboard/manage-bidPost')
     }
+
+
+    // update or edit a post
+    // const handleUpdateSubmit = async e => {
+    //     const token = localStorage.getItem('token')
+    //     e.preventDefault()
+    //     const form = e.target
+    //     const image = form.image.value
+    //     const title = form.title.value
+    //     const product_name = form.product_name.value
+    //     const location = form.location.value
+    //     const price = parseFloat(form.price.value)
+    //     const category = form.category.value
+    //     const condition = form.condition.value
+    //     const reason = form.reason.value
+    //     const purchase_date = startDate
+    //     const description = form.description.value
+    //     const confirmation = await swal.fire({
+    //         title: 'Are you sure to edit?',
+    //         text: "You won't be able to revert this!",
+    //         icon: 'warning',
+    //         showCancelButton: true,
+    //         confirmButtonColor: '#3085d6',
+    //         cancelButtonColor: '#d33',
+    //         confirmButtonText: 'Yes, update it!'
+    //     });
+
+    //     const postData = {
+    //         image,
+    //         title,
+    //         product_name,
+    //         location,
+    //         price,
+    //         category,
+    //         condition,
+    //         reason,
+    //         purchase_date,
+    //         description,
+
+    //         seller: {
+    //             name: user?.displayName,
+    //             email: user?.email,
+    //             photo: user?.photoURL,
+    //         },
+    //     }
+    //     if (confirmation.isConfirmed) {
+    //         try {
+    //             if (!token) {
+    //                 throw new Error('Authentication token is missing');
+    //             }
+
+    //             const { data } = await axios.put(
+    //                 `${import.meta.env.VITE_API_URL}/bidPost/${bidPost._id}`,
+    //                 postData,
+    //                 {
+    //                     headers: {
+    //                         "content-type": "application/json",
+    //                         authorization: `Bearer ${token}`
+    //                     },
+    //                 }
+    //             );
+
+    //             console.log(data);
+    //             toast.success('Update & save the post successfully');
+    //             navigate('/dashboard/manage-bidPost');
+    //         } catch (err) {
+    //             console.error("Error updating bid post:", err.response ? err.response.data : err.message);
+    //             toast.error(err.response ? err.response.data.message || err.message : err.message);
+    //         }
+            // try {
+            //     const { data } = await axios.put(`${import.meta.env.VITE_API_URL}/bidPost/${bidPost._id}`, postData,
+            //         {
+            //             headers: {
+            //                 authorization: `Bearer ${token}`
+            //             }
+            //         }
+            //     );
+            //     console.log(data)
+            //     toast.success('Update & save the post successfully')
+            //     navigate('/dashboard/manage-bidPost')
+            // } catch (err) {
+            //     console.log(err)
+            //     toast.error(err.message)
+            // }
+    //     }
+
+    // }
 
     return (
         <div className="flex flex-col items-center justify-center">

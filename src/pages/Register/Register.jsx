@@ -9,7 +9,7 @@ import { AuthContext } from '../../provider/AuthProvider';
 import SocialLogin from '../Login/SocialLogin';
 import toast from 'react-hot-toast';
 import { Helmet } from 'react-helmet-async';
-import axios from 'axios';
+
 
 
 const Register = () => {
@@ -54,28 +54,34 @@ const Register = () => {
         const { email, password, fullName, imageUrl } = data;
         // create user and update profile
         createUser(email, password)
-        .then(data => {
-            if(data?.user?.email){
-                const userInfo = {
-                    email: data?.user?.email,
-                    fullName: fullName,
-                    imageUrl: imageUrl
+            .then(data => {
+                console.log(data.user);
+                if (data?.user?.email) {
+                    const userInfo = {
+                        email: data?.user?.email,
+                        fullName: fullName,
+                        photoURL: imageUrl
+                    }
+                    fetch(`${import.meta.env.VITE_API_URL}/user`, {
+                        method: "POST",
+                        headers: {
+                            'Content-type': "application/json"
+                        },
+                        body: JSON.stringify(userInfo)
+                    })
+                        .then((res) => res.json())
+                        .then((data) => {
+                            console.log('data', data);
+                            localStorage.setItem('token', data?.token)
+                        });
+                    console.log(userInfo)
                 }
-                fetch(`${import.meta.env.VITE_API_URL}/user`, {
-                    method: "POST",
-                    headers : {
-                        'Content-type':"application/json"
-                    },
-                    body : JSON.stringify(userInfo)
-                })
-                console.log(userInfo)
-            }
-        })
+            })
             .then(() => {
                 updateUserProfile(fullName, imageUrl)
                     .then(() => {
-                        const user = { email }
-                        axios.post(`${import.meta.env.VITE_API_URL}/jwt`, user, { withCredentials: true })
+                        // const user = { email }
+                        // axios.post(`${import.meta.env.VITE_API_URL}/jwt`, user, { withCredentials: true })
                         navigate(from, { replace: true });
                         toast.success('User created & log in successfully'); // Show success toast                  
                     });
@@ -98,7 +104,7 @@ const Register = () => {
                     <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100 text-center ">
                         <h2 className="text-3xl mb-6">Register</h2>
                         <h1 className="text-xl md:text-5xl text-white font-bold"><span className="text-orange-600">Bid</span><span className="text-purple-600">Day</span></h1>
-                    <p className="text-orange-600">Where deals are await!</p>
+                        <p className="text-orange-600">Where deals are await!</p>
                     </div>
                 </div>
                 <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">

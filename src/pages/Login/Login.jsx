@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Icon } from 'react-icons-kit';
@@ -32,7 +32,7 @@ const Login = () => {
         }
     }
 
-    const { signInUser } = useContext(AuthContext)
+    const { signInUser, user } = useContext(AuthContext)
 
     const {
         register,
@@ -50,14 +50,27 @@ const Login = () => {
                 const loggedInUser = result.user;
                 console.log(loggedInUser);
                 const user = { email }
-                axios.post(`${import.meta.env.VITE_API_URL}/jwt`, user, { withCredentials: true })
-                    .then(res => {
-                        console.log(res.data)
-                        if (res.data) {
-                            navigate(from, { replace: true });
-                            toast.success('Sign In Success')
-                        }
-                    })
+                if (user) {
+                    navigate(from, { replace: true });
+                    toast.success('Sign In Success')
+                }
+
+                // email of user send to db & create token
+                const userInfo = {
+                    email: email
+                }
+                fetch(`${import.meta.env.VITE_API_URL}/user`, {
+                    method: "POST",
+                    headers: {
+                        'Content-type': "application/json"
+                    },
+                    body: JSON.stringify(userInfo)
+                })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        console.log('data', data);
+                        localStorage.setItem('token', data?.token)
+                    });
 
             })
             .catch(error => {
@@ -66,6 +79,31 @@ const Login = () => {
                 console.log(error.message);
             });
     };
+
+    // const onSubmit = (data) => {
+    //     const { email, password } = data;
+
+    //     signInUser(email, password)
+    //         .then(result => {
+    //             const loggedInUser = result.user;
+    //             console.log(loggedInUser);
+    //             const user = { email }
+    //             axios.post(`${import.meta.env.VITE_API_URL}/jwt`, user, { withCredentials: true })
+    //                 .then(res => {
+    //                     console.log('res.dat', res.data)
+    //                     if (res.data) {
+    //                         navigate(from, { replace: true });
+    //                         toast.success('Sign In Success')
+    //                     }
+    //                 })
+
+    //         })
+    //         .catch(error => {
+    //             setErrorMessage("Incorrect email or password."); // Set error message for incorrect login
+    //             toast.error("Incorrect email or password.")
+    //             console.log(error.message);
+    //         });
+    // };
 
     return (
         <div className="hero min-h-screen bg-base-200">

@@ -9,12 +9,10 @@ import { useState } from "react";
 
 const AddBidPost = () => {
     const { user } = UseAuth();
-
     const [startDate, setStartDate] = useState(new Date());
-
     const navigate = useNavigate()
-
-    const handleBidPostSubmit = async e => {
+    const token = localStorage.getItem('token')
+    const handleBidPostSubmit = async (e) => {
         e.preventDefault()
         const form = e.target
         const image = form.image.value
@@ -46,16 +44,73 @@ const AddBidPost = () => {
                 photo: user?.photoURL,
             },
         }
-        try {
-            const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/post`, postData)
-            console.log(data)
-            toast.success('Congrats! Your recipe post successfully.')
-            navigate('/dashboard/manage-bidPost')
-        } catch (err) {
-            toast.error(err)
-            console.log(err)
-        }
+        await fetch(`${import.meta.env.VITE_API_URL}/post`, {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json",
+              authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(postData),
+          })
+            .then((res) => res.json())
+            .then(() => {
+              toast.success("Product added successful");
+              form.reset();
+              navigate('/dashboard/manage-bidPost')
+            });
     }
+
+
+    // const handleBidPostSubmit = async e => {
+    //     e.preventDefault()
+    //     const form = e.target
+    //     const image = form.image.value
+    //     const title = form.title.value
+    //     const product_name = form.product_name.value
+    //     const location = form.location.value
+    //     const price = parseFloat(form.price.value)
+    //     const category = form.category.value
+    //     const condition = form.condition.value
+    //     const reason = form.reason.value
+    //     const purchase_date = startDate
+    //     const description = form.description.value
+
+    //     const postData = {
+    //         image,
+    //         title,
+    //         product_name,
+    //         location,
+    //         price,
+    //         category,
+    //         condition,
+    //         reason,
+    //         purchase_date,
+    //         description,
+
+    //         seller: {
+    //             name: user?.displayName,
+    //             email: user?.email,
+    //             photo: user?.photoURL,
+    //         },
+    //     }
+    //     try {
+    //         const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/post`, postData,
+    //             {
+    //                 headers: {
+    //                     "content-type": "application/json",
+    //                     authorization: `Bearer ${token}`
+    //                 },
+    //                 body: JSON.stringify(data),
+    //             }
+    //         )
+    //         console.log(data)
+    //         toast.success('Congrats! Your recipe post successfully.')
+    //         navigate('/dashboard/manage-bidPost')
+    //     } catch (err) {
+    //         toast.error(err)
+    //         console.log(err)
+    //     }
+    // }
 
     return (
         <div className="flex flex-col items-center justify-center">

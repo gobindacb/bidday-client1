@@ -14,6 +14,7 @@ import BidPostDetails from "../pages/BidPostDetails";
 import AllBidPost from "../pages/AllBidPost";
 import PrivateRoute from "./PrivateRoute";
 import PasswordResetModal from "../components/Modals/PasswordResetModal";
+import BidRequest from "../pages/Dashboard/BidRequest";
 
 
 const router = createBrowserRouter([
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
                     {
                         path: '/dashboard/manage-bidPost',
                         element: <ManageBidPost/>
+                    },
+                    {
+                        path: '/dashboard/manage-bidRequest',
+                        element: <BidRequest/>
                     },
                     {
                         path:'/dashboard/update/:id',
